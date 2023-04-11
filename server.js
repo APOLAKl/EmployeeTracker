@@ -3,6 +3,7 @@ const mysql = require("mysql2");
 require("dotenv").config();
 require("console.table");
 
+// Connect to database
 const db = mysql.createConnection({
   host: "localhost",
   user: process.env.DB_USER,
@@ -35,24 +36,24 @@ const mainMenu = () => {
           viewAllDepartments();
        }
        if(answer.Action == 'view all roles') {
-          viewAllRoles();
+         viewAllRoles();
        }
        if(answer.Action == 'view all employees') {
-          viewAllEmployee();
+         viewAllEmployees();
        }
        if(answer.Action == 'add a department') {
-         addDepartment()
+         addDepartment();
        }
        if(answer.Action == 'add a role')  {
-   
+         addRole();
        }
        if(answer.Action == 'add an employee')  {
-   
+         addEmployee();
        }
        if(answer.Action == 'update an employee role') {
    
        }
-       if(answer.Action == "exit") {
+       if(answer.Action == "quit") {
         console.log("Goodbye!")
         process.exit(1)
        }
@@ -81,7 +82,7 @@ const viewAllRoles = () => {
   })
 }
 
-const viewAllEmployee = () => {
+const viewAllEmployees = () => {
   db.query("SELECT * FROM employee;", (err, data) => {
     if(err) {
       console.log(err);
@@ -112,5 +113,60 @@ const addDepartment = () => {
   })
 }
 
+const addRole = () => {
+  inquirer.prompt([
+    {
+      type: "input",
+      name: "title",
+      message: "What is the job title of the employee?"
+    },
+    {
+      type: "input",
+      name: "salary",
+      message: "What is the salary of the employee?"
+    }
+  ])
+  .then(answer => {
+    db.query(`INSERT INTO role (title, salary) VALUES ("${answer.title}", "${answer.salary}");`, (err, data) => {
+      if(err) {
+        console.log(err);
+        return;
+      }
+      console.log("Job Title and Salary added!(Role)");
+      mainMenu();
+    })
+  })
+}
+
+const addEmployee = () => {
+  inquirer.prompt([
+    {
+      type: "input",
+      name: "first_name",
+      message: "What is the first_name of the employee?"
+    },
+    {
+      type: "input",
+      name: "last_name",
+      message: "What is the last_name of the employee?"
+    }
+    {
+      type: "confirm",
+      name: "isManager",
+      message: "is he/she a Manager? Type \`y\` to update",
+      default: false
+    }
+  ])
+  .then(answer => {
+    db.query(`INSERT INTO role (title, salary) VALUES ("${answer.first_name}", "${answer.last_name}", "${answer.isManager}");`, (err, data) => {
+      if(err) {
+        console.log(err);
+        return;
+      }
+      console.log("isManager, First and Last name added!(Employee)");
+      mainMenu();
+    })
+  })
+}
 
 mainMenu();
