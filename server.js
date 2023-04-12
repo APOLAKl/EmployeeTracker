@@ -3,6 +3,7 @@ const mysql = require("mysql2");
 require("dotenv").config();
 require("console.table");
 
+
 // Connect to database
 const db = mysql.createConnection({
   host: "localhost",
@@ -11,7 +12,7 @@ const db = mysql.createConnection({
   database: process.env.DB_NAME
 })
 
-
+// Main Menu
 const mainMenu = () => {
   inquirer.prompt(
     {
@@ -51,7 +52,7 @@ const mainMenu = () => {
          addEmployee();
        }
        if(answer.Action == 'update an employee role') {
-   
+         updateEmployeeRole();
        }
        if(answer.Action == "quit") {
         console.log("Goodbye!")
@@ -97,12 +98,12 @@ const addDepartment = () => {
   inquirer.prompt([
     {
       type: "input",
-      name: "name",
+      name: "department",
       message: "What is the name of the new department?"
     }
   ])
   .then(answer => {
-    db.query(`INSERT INTO department (name) VALUES ("${answer.name}");`, (err, data) => {
+    db.query(`INSERT INTO department (name) VALUES ("${answer.department}");`, (err, data) => {
       if(err) {
         console.log(err);
         return;
@@ -123,7 +124,7 @@ const addRole = () => {
     {
       type: "input",
       name: "salary",
-      message: "What is the salary of the employee?"
+      message: "What is the job salary of the employee?"
     }
   ])
   .then(answer => {
@@ -149,7 +150,7 @@ const addEmployee = () => {
       type: "input",
       name: "last_name",
       message: "What is the last_name of the employee?"
-    }
+    },
     {
       type: "confirm",
       name: "isManager",
@@ -164,6 +165,32 @@ const addEmployee = () => {
         return;
       }
       console.log("isManager, First and Last name added!(Employee)");
+      mainMenu();
+    })
+  })
+}
+
+
+const updateEmployeeRole = () => {
+  inquirer.prompt([
+    {
+      type: "list",
+      name: "employee",
+      message: "Which employee's role would you like to update?",
+    },
+    {
+      type: "list",
+      name: "newrole",
+      message: "What is their new role?",
+    }
+  ])
+  .then(answer => {
+    db.query(`UPDATE role (title) SET ("${answer.newrole}");`, (err, data) => {
+      if(err) {
+        console.log(err);
+        return;
+      }
+      console.log("Job Title updated");
       mainMenu();
     })
   })
