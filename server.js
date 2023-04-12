@@ -12,6 +12,11 @@ const db = mysql.createConnection({
   database: process.env.DB_NAME
 })
 
+db.connect(function(err) {
+  if (err) throw err;
+  console.log("You are connected to database!")
+});
+
 // Main Menu
 const mainMenu = () => {
   inquirer.prompt(
@@ -67,6 +72,7 @@ const viewAllDepartments = () => {
       console.log(err);
       return;
     }
+    console.log('Showing all departments\n');
     console.table(data)
     mainMenu();
   })
@@ -78,6 +84,7 @@ const viewAllRoles = () => {
       console.log(err);
       return;
     }
+    console.log('Showing all roles\n');
     console.table(data)
     mainMenu();
   })
@@ -89,6 +96,7 @@ const viewAllEmployees = () => {
       console.log(err);
       return;
     }
+    console.log('Showing all employees\n');
     console.table(data)
     mainMenu();
   })
@@ -98,8 +106,16 @@ const addDepartment = () => {
   inquirer.prompt([
     {
       type: "input",
-      name: "department",
-      message: "What is the name of the new department?"
+      name: "addDept",
+      message: "What is the name of the new department?",
+      validate: addDept => {
+        if (addDept) {
+            return true;
+        } else {
+            console.log('Please enter a department');
+            return false;
+        }
+      }
     }
   ])
   .then(answer => {
@@ -119,12 +135,28 @@ const addRole = () => {
     {
       type: "input",
       name: "title",
-      message: "What is the job title of the employee?"
+      message: "What is the job title of the employee?",
+      validate: addRole => {
+        if (addRole) {
+            return true;
+        } else {
+            console.log('Please enter a title');
+            return false;
+        }
+      }
     },
     {
       type: "input",
       name: "salary",
-      message: "What is the job salary of the employee?"
+      message: "What is the job salary of the employee?",
+      validate: addSalary => {
+        if (isNAN(addSalary)) {
+            return true;
+        } else {
+            console.log('Please enter a salary');
+            return false;
+        }
+      }
     }
   ])
   .then(answer => {
@@ -144,12 +176,28 @@ const addEmployee = () => {
     {
       type: "input",
       name: "first_name",
-      message: "What is the first_name of the employee?"
+      message: "What is the first_name of the employee?",
+      validate: addFirstName => {
+        if (addFirstName) {
+            return true;
+        } else {
+            console.log('Please enter a valid first name');
+            return false;
+        }
+      }
     },
     {
       type: "input",
       name: "last_name",
-      message: "What is the last_name of the employee?"
+      message: "What is the last_name of the employee?",
+      validate: addLastName => {
+        if (addLastName) {
+            return true;
+        } else {
+            console.log('Please enter a valid last name');
+            return false;
+        }
+      }
     },
     {
       type: "confirm",
