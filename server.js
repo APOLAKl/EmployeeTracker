@@ -21,9 +21,9 @@ db.connect(function(err) {
 const mainMenu = () => {
   inquirer.prompt(
     {
-     type: 'list',
-     name: 'Action',
-     message: 'What would you like to do?',
+     type: "list",
+     name: "Action",
+     message: "What would you like to do?",
      choices: [
        'view all departments',
        'view all roles',
@@ -67,24 +67,24 @@ const mainMenu = () => {
 }
 
 const viewAllDepartments = () => {
-  db.query("SELECT * FROM department;", (err, data) => {
+  db.promise().query("SELECT * FROM department;", (err, data) => {
     if(err) {
       console.log(err);
       return;
     }
-    console.log('Showing all departments\n');
+    console.log("Showing all departments!\n");
     console.table(data)
     mainMenu();
   })
 }
 
 const viewAllRoles = () => {
-  db.query("SELECT * FROM role;", (err, data) => {
+  db.promise().query("SELECT * FROM role;", (err, data) => {
     if(err) {
       console.log(err);
       return;
     }
-    console.log('Showing all roles\n');
+    console.log("Showing all roles!\n");
     console.table(data)
     mainMenu();
   })
@@ -96,7 +96,7 @@ const viewAllEmployees = () => {
       console.log(err);
       return;
     }
-    console.log('Showing all employees\n');
+    console.log("Showing all employees!\n");
     console.table(data)
     mainMenu();
   })
@@ -112,62 +112,79 @@ const addDepartment = () => {
         if (addDept) {
             return true;
         } else {
-            console.log('Please enter a department');
+            console.log("Department cannot be null");
             return false;
         }
       }
     }
   ])
   .then(answer => {
-    db.query(`INSERT INTO department (name) VALUES ("${answer.department}");`, (err, data) => {
+    db.query(`INSERT INTO department (name) VALUES ("${answer.addDept}");`, (err, data) => {
       if(err) {
         console.log(err);
         return;
       }
       console.log("Department added!");
+      viewAllDepartments();
       mainMenu();
     }) 
   })
 }
 
 const addRole = () => {
-  inquirer.prompt([
-    {
-      type: "input",
-      name: "title",
-      message: "What is the job title of the employee?",
-      validate: addRole => {
-        if (addRole) {
-            return true;
-        } else {
-            console.log('Please enter a title');
-            return false;
-        }
+  db.query(`SELECT * FROM department;`, (err, data) => {
+      const dept = data.map(department => ({name: department.name, value: department.id}));
+      inquirer.prompt([
+        {
+          type: "input",
+          name: "title",
+          message: "What is the job title of the employee?",
+          validate: addTitle => {
+            if (addTitle) {
+                return true;
+            } else {
+                console.log("Please enter a title");
+                return false;
+            }
+          }
+        },
+        {
+          type: "input",
+          name: "salary",
+          message: "What is the job salary of the employee?",
+          validate: addSalary => {
+            if (isNAN(addSalary)) {
+                return true;
+            } else {
+                console.log("Please enter a salary");
+                return false;
+            }
+          }
+        },
+        {
+          type: "rawlist",
+          name: "deptName",
+          message: "What department would you like to add the new role to?",
+          choices: "dept"
+        },
+      ])
+      .then((answer)) => {
+        db.query(`INSERT INTO role SET ?`,
+        {
+          TITLE: answer.title,
+          salary: answer.salary,
+          id: answer.deptName,
+        }, (err, data) => {
+          if(err) {
+            console.log(err);
+            return;
+          }
+          console.log("\nAdded to database!\n");
+          viewAllRoles();
+          mainMenu();
+        })
       }
-    },
-    {
-      type: "input",
-      name: "salary",
-      message: "What is the job salary of the employee?",
-      validate: addSalary => {
-        if (isNAN(addSalary)) {
-            return true;
-        } else {
-            console.log('Please enter a salary');
-            return false;
-        }
-      }
-    }
-  ])
-  .then(answer => {
-    db.query(`INSERT INTO role (title, salary) VALUES ("${answer.title}", "${answer.salary}");`, (err, data) => {
-      if(err) {
-        console.log(err);
-        return;
-      }
-      console.log("Job Title and Salary added!(Role)");
-      mainMenu();
-    })
+    
   })
 }
 
