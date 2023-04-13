@@ -67,7 +67,7 @@ const mainMenu = () => {
 }
 
 const viewAllDepartments = () => {
-  db.promise().query("SELECT * FROM department;", (err, data) => {
+  db.query("SELECT * FROM department;", (err, data) => {
     if(err) {
       console.log(err);
       return;
@@ -79,7 +79,7 @@ const viewAllDepartments = () => {
 }
 
 const viewAllRoles = () => {
-  db.promise().query("SELECT * FROM role;", (err, data) => {
+  db.query("SELECT * FROM role;", (err, data) => {
     if(err) {
       console.log(err);
       return;
@@ -153,7 +153,7 @@ const addRole = () => {
           name: "salary",
           message: "What is the job salary of the employee?",
           validate: addSalary => {
-            if (isNAN(addSalary)) {
+            if (addSalary) {
                 return true;
             } else {
                 console.log("Please enter a salary");
@@ -168,10 +168,10 @@ const addRole = () => {
           choices: "dept"
         },
       ])
-      .then((answer)) => {
+      .then(answer => {
         db.query(`INSERT INTO role SET ?`,
         {
-          TITLE: answer.title,
+          title: answer.title,
           salary: answer.salary,
           id: answer.deptName,
         }, (err, data) => {
@@ -183,7 +183,7 @@ const addRole = () => {
           viewAllRoles();
           mainMenu();
         })
-      }
+      })
     
   })
 }
