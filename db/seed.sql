@@ -1,4 +1,4 @@
-INSERT INTO department (name)
+INSERT INTO department (department_name)
 VALUES
 ('Finance'),
 ('Sports'),
@@ -21,7 +21,10 @@ VALUES
 ('Waterboy', 250, 2),
 ('Hacker', 3000, 3),
 ('General', 8000, 4),
-('Doctor', 10000, 6);
+('Doctor', 10000, 6),
+('Congressman', 10000, 5),
+('Whitehat', 5000, 3);
+
 
 INSERT INTO employee (first_name, last_name, role_id, manager_id)
 VALUES
@@ -36,7 +39,7 @@ VALUES
 ('Jolli', 'Bee', 7, 8),
 ('Star', 'Bucks', 8, 8),
 ('Tim', 'Hortons', 9, NULL),
-('Dunkin', 'Donut', 10, 13),
+('Dunkin', 'Donut', 10, 3),
 ('Pizza', 'Pizza', 11, NULL),
-('Thai', 'Express', 12, 13),
+('Thai', 'Express', 12, 3),
 ('Wild', 'Wing', 13, NULL);
