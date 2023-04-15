@@ -18,6 +18,9 @@ db.connect(function (err) {
 
 // Main Menu
 const mainMenu = () => {
+  console.log(`
+  █▀▀ █▀▄▀█ █▀█ █░░ █▀█ █▄█ █▀▀ █▀▀   ▀█▀ █▀█ ▄▀█ █▀▀ █▄▀ █▀▀ █▀█
+  ██▄ █░▀░█ █▀▀ █▄▄ █▄█ ░█░ ██▄ ██▄   ░█░ █▀▄ █▀█ █▄▄ █░█ ██▄ █▀▄`);
   inquirer
     .prompt({
       type: "list",
@@ -159,7 +162,7 @@ const addRole = () => {
           name: "salary",
           message: "What is the job salary of the employee?",
           validate: (addSalary) => {
-            if (isNAN(addSalary)) {
+            if (addSalary) {
               return true;
             } else {
               console.log("Please enter a salary");
