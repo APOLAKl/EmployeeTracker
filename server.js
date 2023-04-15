@@ -18,6 +18,9 @@ db.connect(function (err) {
 
 // Main Menu
 const mainMenu = () => {
+  console.log(`
+  █▀▀ █▀▄▀█ █▀█ █░░ █▀█ █▄█ █▀▀ █▀▀   ▀█▀ █▀█ ▄▀█ █▀▀ █▄▀ █▀▀ █▀█
+  ██▄ █░▀░█ █▀▀ █▄▄ █▄█ ░█░ ██▄ ██▄   ░█░ █▀▄ █▀█ █▄▄ █░█ ██▄ █▀▄`);
   inquirer
     .prompt({
       type: "list",
@@ -77,12 +80,12 @@ const viewAllDepartments = () => {
 };
 
 const viewAllRoles = () => {
-  db.query("SELECT * FROM role;", (err, data) => {
+  db.query("SELECT role.id, role.title, role.salary, department.department_name, department.id FROM role JOIN department ON role.id = department.id ORDER BY role.id ASC;", (err, data) => {
     if (err) {
       console.log(err);
       return;
     }
-    console.log("Showing all roles!\n");
+    console.log("\nShowing all roles!\n");
     console.table(data);
     mainMenu();
   });
@@ -94,7 +97,7 @@ const viewAllEmployees = () => {
       console.log(err);
       return;
     }
-    console.log("Showing all employees!\n");
+    console.log("\nShowing all employees!\n");
     console.table(data);
     mainMenu();
   });
@@ -159,7 +162,7 @@ const addRole = () => {
           name: "salary",
           message: "What is the job salary of the employee?",
           validate: (addSalary) => {
-            if (isNAN(addSalary)) {
+            if (addSalary) {
               return true;
             } else {
               console.log("Please enter a salary");
@@ -197,7 +200,6 @@ const addRole = () => {
             }
             console.log("\nAdded to database!\n");
             viewAllRoles();
-            mainMenu();
           }
         );
       });
@@ -208,7 +210,7 @@ const addEmployee = () => {
   db.query("SELECT * FROM employee WHERE manager_id IS NULL", (err, data) => {
     // const managerList = data.filter(emp => emp.manager_id == null);
     // console.log(managerList)
-    console.log(data);
+    console.table(data);
 
     const managerList = data.map((employee) => {
       return {
