@@ -92,7 +92,7 @@ const viewAllRoles = () => {
 };
 
 const viewAllEmployees = () => {
-  db.query("SELECT * FROM employee;", (err, data) => {
+  db.query(`SELECT employee.id, employee.first_name, employee.last_name, role.id, role.title, role.salary, department.department_name, department.id FROM role JOIN department ON role.id = department.id ORDER BY role.id ASC;`, (err, data) => {
     if (err) {
       console.log(err);
       return;
