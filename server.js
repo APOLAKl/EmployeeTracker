@@ -73,14 +73,14 @@ const viewAllDepartments = () => {
       console.log(err);
       return;
     }
-    console.log("Showing all departments!\n");
+    console.log("\nShowing all departments!\n");
     console.table(data);
     mainMenu();
   });
 };
 
 const viewAllRoles = () => {
-  db.query("SELECT role.id, role.title, role.salary, department.department_name, department.id FROM role JOIN department ON role.id = department.id ORDER BY role.id ASC;", (err, data) => {
+  db.query("SELECT role.id, role.title, role.salary, department.department_name FROM role LEFT JOIN department ON role.department_id = department.id;", (err, data) => {
     if (err) {
       console.log(err);
       return;
@@ -92,7 +92,7 @@ const viewAllRoles = () => {
 };
 
 const viewAllEmployees = () => {
-  db.query(`SELECT employee.id, employee.first_name, employee.last_name, role.id, role.title, role.salary, department.department_name, department.id FROM role JOIN department ON role.id = department.id ORDER BY role.id ASC;`, (err, data) => {
+  db.query("SELECT employee.id, employee.first_name, employee.last_name, role.title, department.department_name, role.salary, CONCAT(manager.first_name, ' ', manager.last_name) FROM employee LEFT JOIN role ON employee.role_id = role.id LEFT JOIN department ON role.department_id = department.id LEFT JOIN employee manager ON manager.id = employee.manager_id;", (err, data) => {
     if (err) {
       console.log(err);
       return;
@@ -162,7 +162,7 @@ const addRole = () => {
           name: "salary",
           message: "What is the job salary of the employee?",
           validate: (addSalary) => {
-            if (addSalary) {
+            if (isNaN(addSalary)) {
               return true;
             } else {
               console.log("Please enter a salary");
